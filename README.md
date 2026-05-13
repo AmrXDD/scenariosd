@@ -153,4 +153,5 @@ All sizes use `clamp()` so the layout scales from 320px to 4K without breakpoint
 - Color contrast: `bone-50` on `ink-950` exceeds WCAG AAA for body copy.
 - Animation respects `prefers-reduced-motion` at every entry point.
 #   s c e n a r i o s  
+ #   s c e n a r i o s  
  
