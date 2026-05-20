@@ -1,85 +1,18 @@
 import { useEffect, useRef } from "react";
+import { Link } from "@remix-run/react";
 import { Container } from "~/components/Container";
 import { RevealText } from "~/components/RevealText";
 import { MagneticButton } from "~/components/MagneticButton";
 import { ensureGsap } from "~/animations/gsap.client";
 import { useReducedMotion } from "~/hooks/useReducedMotion";
+import { useRequestDeck } from "~/components/RequestDeckModal";
+import { projects } from "~/data/projects";
 import { cn } from "~/utils/cn";
-
-type Project = {
-  index: string;
-  title: string;
-  location: string;
-  scope: string;
-  year: string;
-  brief: string;
-  note: string;
-  materials: string[];
-  image: string;
-  alt: string;
-};
-
-const projects: Project[] = [
-  {
-    index: "Case 01",
-    title: "Adam — Head Office",
-    location: "Kuwait City",
-    scope: "Fit-out · Joinery · Walls & Flooring",
-    year: "Featured",
-    brief:
-      "A corporate floor staged as a calm, considered backdrop for the people who work inside it.",
-    note: "End-to-end delivery from the Scenarios studio: design coordination, joinery from our Shuwaikh workshop, walls, lighting and finishing — all sequenced under one site manager.",
-    materials: ["Veneered joinery", "Soft acoustics", "Warm directional lighting"],
-    image:
-      "https://scenariosd.com/wp-content/uploads/2025/04/whatsapp-image-2025-04-07-at-1.47.40-pm-4.jpeg",
-    alt: "Adam head office interior in Kuwait — Scenarios Design fit-out",
-  },
-  {
-    index: "Case 02",
-    title: "Commercial Interior",
-    location: "Kuwait City",
-    scope: "Design · Fit-out · Finishing",
-    year: "2025",
-    brief:
-      "A workspace shaped by material restraint. Joinery, walls and lighting built in-house to the same script.",
-    note: "Detailed layouts and 3D were developed with the client before a single wall was framed. Every cabinet, every reveal, every surface was prototyped at our workshop and delivered to site as a kit of parts.",
-    materials: ["Custom millwork", "Soft white walls", "Hard-wearing flooring"],
-    image:
-      "https://scenariosd.com/wp-content/uploads/2025/04/20250415_144156.jpg",
-    alt: "Scenarios Design fit-out commercial interior in Kuwait",
-  },
-  {
-    index: "Case 03",
-    title: "Recent Build",
-    location: "Kuwait",
-    scope: "Joinery · Walls & Flooring · MEP",
-    year: "2025",
-    brief:
-      "A fresh delivery from the Scenarios floor — the script staged, the room ready for its first audience.",
-    note: "Joinery, walls, flooring and MEP coordinated end-to-end. Materials cast like characters — every junction drawn, fabricated and signed off against the same set of shop drawings.",
-    materials: ["Wood-on-wood detailing", "HVAC integration", "Layered lighting"],
-    image:
-      "https://scenariosd.com/wp-content/uploads/2025/12/20251128_151259.jpg",
-    alt: "Recent Scenarios Design build in Kuwait",
-  },
-  {
-    index: "Case 04",
-    title: "Retail / Studio Floor",
-    location: "Kuwait",
-    scope: "Concept · Fabrication · Fit-out",
-    year: "2024",
-    brief:
-      "Retail floor as stage — sightlines, materials and signage tuned for the brand’s real customer journey.",
-    note: "From dimension take-offs through 3D concept, into fabrication at our workshop, and onto site as a turn-key install — one accountable team for the entire production.",
-    materials: ["Display joinery", "Brand signage", "Retail-grade flooring"],
-    image: "https://scenariosd.com/wp-content/uploads/2025/04/img_66851.jpg",
-    alt: "Retail interior delivered by Scenarios Design Kuwait",
-  },
-];
 
 export function Work() {
   const ref = useRef<HTMLElement | null>(null);
   const reduced = useReducedMotion();
+  const { open: openDeck } = useRequestDeck();
 
   useEffect(() => {
     if (reduced || !ref.current) return;
@@ -175,12 +108,7 @@ export function Work() {
             <MagneticButton
               variant="outline"
               data-cursor="Portfolio"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.location.href =
-                    "mailto:info@scenariosd.com?subject=Portfolio%20Request";
-                }
-              }}
+              onClick={openDeck}
             >
               Request the deck
             </MagneticButton>
@@ -192,16 +120,19 @@ export function Work() {
             const reverse = i % 2 === 1;
             return (
               <article
-                key={p.title}
+                key={p.slug}
                 data-work-card
-                data-cursor="View"
                 className={cn(
                   "grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10 md:items-end"
                 )}
               >
-                <div
+                <Link
+                  to={`/work/${p.slug}`}
+                  prefetch="intent"
+                  data-cursor="View"
+                  aria-label={`Open ${p.title} case study`}
                   className={cn(
-                    "md:col-span-7 relative aspect-[4/5] overflow-hidden rounded-sm border hairline bg-ink-900",
+                    "group/card md:col-span-7 relative aspect-[4/5] overflow-hidden rounded-sm border hairline bg-ink-900 outline-none focus-visible:ring-2 focus-visible:ring-rust-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
                     reverse ? "md:col-start-6" : "md:col-start-1"
                   )}
                 >
@@ -222,11 +153,19 @@ export function Work() {
                       <span>{p.index}</span>
                       <span>{p.year}</span>
                     </div>
-                    <h3 className="font-display text-fluid-2xl md:text-fluid-3xl leading-[1.0] text-balance">
-                      {p.title}
-                    </h3>
+                    <div className="flex items-end justify-between gap-4">
+                      <h3 className="font-display text-fluid-2xl md:text-fluid-3xl leading-[1.0] text-balance">
+                        {p.title}
+                      </h3>
+                      <span
+                        aria-hidden
+                        className="hidden sm:inline-flex shrink-0 items-center gap-2 rounded-full border border-bone-50/25 bg-ink-950/40 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/85 backdrop-blur-sm transition-transform duration-500 ease-out-cinema group-hover/card:translate-x-0.5"
+                      >
+                        View case <span>↗</span>
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </Link>
 
                 <aside
                   className={cn(
@@ -290,6 +229,20 @@ export function Work() {
                       </li>
                     ))}
                   </ul>
+
+                  <div
+                    data-work-meta-item
+                    className={cn(reverse && "md:flex md:justify-end")}
+                  >
+                    <Link
+                      to={`/work/${p.slug}`}
+                      prefetch="intent"
+                      className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50 link-underline"
+                    >
+                      Read case study
+                      <span aria-hidden>↗</span>
+                    </Link>
+                  </div>
                 </aside>
               </article>
             );
@@ -297,16 +250,33 @@ export function Work() {
         </div>
 
         <footer className="mt-20 md:mt-32 flex flex-col items-start gap-6 border-t hairline pt-10 md:flex-row md:items-end md:justify-between">
-          <p className="max-w-xl text-fluid-base text-bone-50/65 text-pretty">
-            The complete portfolio — including private residences — is shared on
-            request. We hold our clients’ privacy as carefully as their finishes.
+          <p className="max-w-xl text-fluid-base text-bone-50/70 text-pretty">
+            We take good care of our clients' privacy — our portfolio is shared
+            on request.{" "}
+            <button
+              type="button"
+              onClick={openDeck}
+              className="text-bone-50 link-underline"
+            >
+              Click here
+            </button>{" "}
+            to get instant access to our portfolio file. Or contact{" "}
+            <a
+              href="mailto:reham@scenariosd.com"
+              className="text-bone-50 link-underline"
+            >
+              reham@scenariosd.com
+            </a>
+            .
           </p>
-          <a
-            href="mailto:info@scenariosd.com?subject=Portfolio%20Request"
+          <button
+            type="button"
+            onClick={openDeck}
+            data-cursor="Deck"
             className="font-mono text-fluid-xs uppercase tracking-[0.22em] text-bone-50 link-underline"
           >
-            info@scenariosd.com ↗
-          </a>
+            Download company profile ↓
+          </button>
         </footer>
       </Container>
     </section>

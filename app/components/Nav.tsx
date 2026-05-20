@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "@remix-run/react";
 import { ensureGsap } from "~/animations/gsap.client";
 import { smoothScrollTo } from "~/utils/smoothScroll";
 import { cn } from "~/utils/cn";
+import { useRequestDeck } from "~/components/RequestDeckModal";
 
 const links = [
   { label: "Manifesto", href: "#manifesto" },
@@ -16,6 +18,10 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { open: openDeck } = useRequestDeck();
+  const onHome = location.pathname === "/";
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -23,6 +29,10 @@ export function Nav() {
 
     const onScroll = () => {
       setScrolled(window.scrollY > 24);
+      if (!onHome) {
+        setActive("");
+        return;
+      }
       const sections = links
         .map((l) => document.querySelector(l.href) as HTMLElement | null)
         .filter(Boolean) as HTMLElement[];
@@ -36,7 +46,7 @@ export function Nav() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [onHome]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -45,14 +55,38 @@ export function Nav() {
     };
   }, [open]);
 
+  const goToAnchor = (href: string) => {
+    if (onHome) {
+      smoothScrollTo(href, -8);
+      history.replaceState(null, "", href);
+    } else {
+      navigate(`/${href}`);
+    }
+  };
+
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
     e.preventDefault();
     setOpen(false);
-    smoothScrollTo(href, -8);
-    history.replaceState(null, "", href);
+    goToAnchor(href);
+  };
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setOpen(false);
+    if (onHome) {
+      smoothScrollTo("#hero", -8);
+      history.replaceState(null, "", "/");
+    } else {
+      navigate("/");
+    }
+  };
+
+  const handleDeckClick = () => {
+    setOpen(false);
+    openDeck();
   };
 
   return (
@@ -72,8 +106,8 @@ export function Nav() {
             )}
           >
             <a
-              href="#hero"
-              onClick={(e) => handleNavClick(e, "#hero")}
+              href="/"
+              onClick={handleLogoClick}
               data-cursor="Top"
               className="group flex items-center pl-1.5 pr-2 sm:pl-2 sm:pr-3"
               aria-label="Scenarios Design Kuwait — home"
@@ -98,7 +132,7 @@ export function Nav() {
                   return (
                     <li key={l.href}>
                       <a
-                        href={l.href}
+                        href={onHome ? l.href : `/${l.href}`}
                         onClick={(e) => handleNavClick(e, l.href)}
                         data-cursor={l.label}
                         className={cn(
@@ -116,11 +150,21 @@ export function Nav() {
               </ul>
             </nav>
 
+            <button
+              type="button"
+              onClick={handleDeckClick}
+              data-cursor="Deck"
+              className="ml-auto hidden md:inline-flex items-center gap-2 rounded-full border border-bone-50/20 px-3.5 lg:px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50/80 hover:text-bone-50 hover:border-bone-50/45 transition-colors duration-500 ease-out-cinema"
+            >
+              <span aria-hidden className="text-bone-50/60">↓</span>
+              Company Profile
+            </button>
+
             <a
-              href="#contact"
+              href={onHome ? "#contact" : "/#contact"}
               onClick={(e) => handleNavClick(e, "#contact")}
               data-cursor="Talk"
-              className="ml-auto hidden md:inline-flex items-center gap-2 rounded-full bg-rust-500 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50 hover:bg-rust-600 transition-colors duration-500 ease-out-cinema"
+              className="hidden md:inline-flex items-center gap-2 rounded-full bg-rust-500 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50 hover:bg-rust-600 transition-colors duration-500 ease-out-cinema"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-bone-50 animate-pulse" />
               Start a project
@@ -180,7 +224,7 @@ export function Nav() {
             {links.map((l, i) => (
               <li key={l.href}>
                 <a
-                  href={l.href}
+                  href={onHome ? l.href : `/${l.href}`}
                   onClick={(e) => handleNavClick(e, l.href)}
                   className="group flex items-baseline justify-between gap-4 border-b hairline py-4 font-display text-[2rem] leading-none"
                 >
@@ -198,10 +242,22 @@ export function Nav() {
             ))}
           </ul>
 
+          <button
+            type="button"
+            onClick={handleDeckClick}
+            className="mt-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-bone-50/15 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
+          >
+            <span className="flex items-center gap-3">
+              <span aria-hidden className="text-bone-50/60">↓</span>
+              Download Company Profile
+            </span>
+            <span aria-hidden className="text-bone-50/40">PDF</span>
+          </button>
+
           <a
-            href="#contact"
+            href={onHome ? "#contact" : "/#contact"}
             onClick={(e) => handleNavClick(e, "#contact")}
-            className="mt-8 flex items-center justify-center gap-2 rounded-full bg-rust-500 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
+            className="mt-3 flex items-center justify-center gap-2 rounded-full bg-rust-500 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-bone-50 animate-pulse" />
             Start a project

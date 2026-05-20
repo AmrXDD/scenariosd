@@ -13,6 +13,7 @@ import { SmoothScroll } from "~/components/SmoothScroll";
 import { Cursor } from "~/components/Cursor";
 import { Nav } from "~/components/Nav";
 import { WhatsAppButton } from "~/components/WhatsAppButton";
+import { RequestDeckProvider } from "~/components/RequestDeckModal";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwind },
@@ -47,10 +48,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <SmoothScroll>
-          <Cursor />
-          <Nav />
-          {children}
-          <WhatsAppButton />
+          <RequestDeckProvider>
+            <Cursor />
+            <Nav />
+            {children}
+            <WhatsAppButton />
+          </RequestDeckProvider>
         </SmoothScroll>
         <NoiseOverlay />
         <ScrollRestoration />

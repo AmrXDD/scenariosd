@@ -1,6 +1,22 @@
+import { useLocation, useNavigate } from "@remix-run/react";
 import { RevealText } from "./RevealText";
+import { useRequestDeck } from "~/components/RequestDeckModal";
+import { smoothScrollTo } from "~/utils/smoothScroll";
 
 export function Footer() {
+  const { open: openDeck } = useRequestDeck();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const goContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (location.pathname === "/") {
+      smoothScrollTo("#contact", -8);
+    } else {
+      navigate("/#contact");
+    }
+  };
+
   return (
     <footer className="relative border-t hairline bg-ink-900 text-bone-50">
       <div className="container-fluid pt-section pb-10 sm:pb-12">
@@ -16,6 +32,28 @@ export function Footer() {
               <span className="block italic font-light text-bone-50/70">that&nbsp;needs</span>
               <span>writing&nbsp;into&nbsp;reality?</span>
             </RevealText>
+
+            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3">
+              <a
+                href="/#contact"
+                onClick={goContact}
+                className="inline-flex items-center justify-center gap-3 rounded-full bg-rust-500 px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50 hover:bg-rust-600 transition-colors duration-500 ease-out-cinema"
+                data-cursor="Talk"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-bone-50 animate-pulse" />
+                Start a project
+              </a>
+              <button
+                type="button"
+                onClick={openDeck}
+                data-cursor="Deck"
+                className="group inline-flex items-center justify-center gap-3 rounded-full border border-bone-50/25 px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50 hover:border-bone-50/60 hover:bg-bone-50/[0.04] transition-colors duration-500 ease-out-cinema"
+              >
+                <span aria-hidden className="text-bone-50/65 transition-transform duration-500 ease-out-cinema group-hover:translate-y-px">↓</span>
+                Download Company Profile
+                <span aria-hidden className="text-bone-50/40">PDF</span>
+              </button>
+            </div>
           </div>
 
           <div className="md:col-span-5 md:pl-12 grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 self-end">
@@ -96,6 +134,15 @@ export function Footer() {
           </p>
 
           <ul className="flex items-center gap-6 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.22em] md:justify-end">
+            <li>
+              <button
+                type="button"
+                onClick={openDeck}
+                className="link-underline"
+              >
+                Company profile ↓
+              </button>
+            </li>
             <li>
               <a
                 href="https://instagram.com/scenarios.design"
