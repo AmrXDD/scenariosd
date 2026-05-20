@@ -213,55 +213,66 @@ export function Nav() {
         <div className="absolute inset-0 bg-ink-950/85 backdrop-blur-xl" />
         <nav
           className={cn(
-            "absolute inset-x-4 top-24 rounded-3xl border hairline bg-ink-900/95 p-6 transition-transform duration-700 ease-out-cinema origin-top",
+            "absolute inset-x-3 top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto overflow-x-hidden rounded-3xl border hairline bg-ink-900/95 transition-transform duration-700 ease-out-cinema origin-top",
             open ? "scale-100 translate-y-0" : "scale-95 -translate-y-4"
           )}
           aria-label="Mobile primary"
           onClick={(e) => e.stopPropagation()}
         >
-          <p className="eyebrow mb-6">Index</p>
-          <ul className="space-y-1">
+          <div className="flex items-center justify-between px-6 pt-6 pb-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/45">
+              Menu
+            </p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/30">
+              Sc / 2026
+            </p>
+          </div>
+
+          <ul className="px-6">
             {links.map((l, i) => (
               <li key={l.href}>
                 <a
                   href={onHome ? l.href : `/${l.href}`}
                   onClick={(e) => handleNavClick(e, l.href)}
-                  className="group flex items-baseline justify-between gap-4 border-b hairline py-4 font-display text-[2rem] leading-none"
+                  className="flex items-baseline gap-5 border-b hairline last:border-b-0 py-4 font-display text-[1.75rem] leading-none"
                 >
-                  <span className="flex items-baseline gap-3">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/45">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="transition-transform duration-500 ease-out-cinema group-hover:translate-x-1">
-                      {l.label}
-                    </span>
+                  <span className="w-6 shrink-0 font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/40">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
+                  <span>{l.label}</span>
                 </a>
               </li>
             ))}
           </ul>
 
-          <button
-            type="button"
-            onClick={handleDeckClick}
-            className="mt-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-bone-50/15 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
-          >
-            <span>Download Company Profile</span>
-            <span aria-hidden className="text-bone-50/40">PDF</span>
-          </button>
+          <div className="space-y-3 border-t hairline bg-ink-950/40 px-6 py-5">
+            <button
+              type="button"
+              onClick={handleDeckClick}
+              className="flex w-full items-center justify-between gap-3 rounded-full border border-bone-50/15 px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
+            >
+              <span>Download Company Profile</span>
+              <span aria-hidden className="text-bone-50/40">PDF</span>
+            </button>
 
-          <a
-            href={onHome ? "#contact" : "/#contact"}
-            onClick={(e) => handleNavClick(e, "#contact")}
-            className="mt-3 flex items-center justify-center gap-2 rounded-full bg-rust-500 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-bone-50 animate-pulse" />
-            Start a project
-          </a>
+            <a
+              href={onHome ? "#contact" : "/#contact"}
+              onClick={(e) => handleNavClick(e, "#contact")}
+              className="flex items-center justify-center gap-2 rounded-full bg-rust-500 px-5 py-3.5 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-bone-50 animate-pulse" />
+              Start a project
+            </a>
+          </div>
 
-          <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/40">
-            Salhiya, Kuwait City · Est. 2015
-          </p>
+          <div className="border-t hairline px-6 py-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/45">
+              Salhiya, Kuwait City
+            </p>
+            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.22em] text-bone-50/30">
+              Est. 2015
+            </p>
+          </div>
         </nav>
       </div>
     </>
