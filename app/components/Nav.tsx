@@ -236,7 +236,6 @@ export function Nav() {
                       {l.label}
                     </span>
                   </span>
-                  <span aria-hidden className="text-bone-50/40">↗</span>
                 </a>
               </li>
             ))}
@@ -247,10 +246,7 @@ export function Nav() {
             onClick={handleDeckClick}
             className="mt-6 flex w-full items-center justify-between gap-3 rounded-2xl border border-bone-50/15 px-5 py-4 font-mono text-[11px] uppercase tracking-[0.22em] text-bone-50"
           >
-            <span className="flex items-center gap-3">
-              <span aria-hidden className="text-bone-50/60">↓</span>
-              Download Company Profile
-            </span>
+            <span>Download Company Profile</span>
             <span aria-hidden className="text-bone-50/40">PDF</span>
           </button>
 
